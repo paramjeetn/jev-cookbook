@@ -1,0 +1,42 @@
+{
+  "state": "From: james.chen@globaltech-industries.com\nTo: enterprise-support@typesafe-demo.com\nDate: Mon, 22 Sep 2026 02:47:18 GMT\nSubject: URGENT - Production API Outage costing $10k/hr - SLA Breach\n\nI am writing to express extreme dissatisfaction. Our entire customer-facing checkout system has been failing for over 3 hours due to 502 Bad Gateway responses from your v2/payments endpoint. We estimate our revenue loss at approximately $10,000 per hour. Your status dashboard reports 'All Systems Operational', which is completely untrue. Our Tier-1 Enterprise contract promises a 15-minute response SLA, yet our tickets have gone unanswered and phone lines keep disconnecting. If this is not escalated to engineering leadership and resolved within the hour, we will be forced to failover to our secondary provider and invoke our contract cancellation clause.\n\nJames Chen\nChief Technology Officer, GlobalTech Industries (Enterprise Tier ID: #GT-88491)",
+  "questions": {
+    "urgency": {
+      "type": "score",
+      "instructions": "Rate the urgency of this support inquiry based on financial impact, system downtime, and contractual SLA breach risk.",
+      "criteria": [
+        "Routine: Minor questions, general inquiries, or non-urgent issues that can wait for normal business hours.",
+        "Elevated: Moderate business friction, non-critical degraded experience, or single-user workflow blockers.",
+        "Critical emergency: Severe production outage, substantial financial losses, active SLA breach, or imminent account cancellation."
+      ]
+    },
+    "sentiment": {
+      "type": "choice",
+      "instructions": "What is the primary emotional sentiment expressed by the customer in this message?",
+      "criteria": {
+        "very_negative": "Furious, outraged, actively threatening legal or contract cancellation, hostile tone.",
+        "negative": "Dissatisfied, frustrated, impatient, or complaining about service quality.",
+        "neutral": "Objective, matter-of-fact, transactional, or polite business inquiry.",
+        "positive": "Appreciative, satisfied, enthusiastic, or complimentary."
+      }
+    },
+    "churn_risk": {
+      "type": "noul",
+      "instructions": "Is there a high probability that this customer will churn, cancel their contract, or switch to a competitor if not resolved immediately?"
+    },
+    "category": {
+      "type": "choice",
+      "instructions": "What operational category best classifies this customer inquiry?",
+      "criteria": {
+        "technical_outage": "System downtime, service unavailability, 5xx server errors, or broken production APIs.",
+        "billing": "Invoices, payment processing charges, credit card updates, or refund requests.",
+        "feature_request": "Ideas for product enhancements, missing capabilities, or feature suggestions.",
+        "account_access": "Login failures, password resets, multi-factor authentication, or SSO permissions."
+      }
+    },
+    "is_enterprise": {
+      "type": "noul",
+      "instructions": "Does this inquiry originate from an enterprise or high-value customer based on corporate scale, contract mentions, or executive title?"
+    }
+  }
+}

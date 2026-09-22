@@ -1,0 +1,33 @@
+{
+  "model": "jev-1.13.0",
+  "state": "TRANSACTION CHECKOUT TELEMETRY\nOrder ID: ORD-20260922-8841\nAccount: User 'crypto_wizard99@tempmail.ninja' (Account age: 14 minutes, 0 previous orders)\nCart Items: 5x $500 Apple E-Gift Cards (Digital Delivery)\nTotal Amount: $2,500.00 USD\nPayment Method: Visa ending in 4118 (First card entry attempt failed: invalid CVV. Second attempt succeeded).\nBilling Address: 742 Evergreen Terrace, Miami, FL 33101\nDelivery Email: burner-delivery-08@tempmail.ninja\nNetwork Telemetry: IP 102.89.33.15 (AS37148 - Datacenter hosting proxy, Lagos, Nigeria).\nBrowser Telemetry: Headless Chrome / Linux x86_64, WebGL fingerprint mismatch, Canvas noise injection detected.\nOrder Timestamp: 03:28:14 UTC (3:28 AM local recipient time). Velocity: 3rd checkout attempt in 4 minutes.",
+  "questions": {
+    "is_fraudulent": {
+      "type": "noul",
+      "instructions": "Does this transaction exhibit high-confidence markers of unauthorized, fraudulent, or syndicate activity?"
+    },
+    "risk_tier": {
+      "type": "choice",
+      "instructions": "Assign the transaction to an operational fraud mitigation risk tier.",
+      "criteria": {
+        "low": "Transaction exhibits legitimate consumer patterns; approve automatically without checkout friction.",
+        "medium": "Borderline risk signals or unusual transaction context; require step-up authentication (e.g. 3D Secure / SMS OTP).",
+        "high": "High fraud probability or elevated risk indicators; hold order fulfillment and dispatch to human fraud review queue.",
+        "block": "Severe fraud markers, proxy evasion, stolen identity patterns, or mass gift card liquidation; decline payment immediately."
+      }
+    },
+    "anomaly_score": {
+      "type": "score",
+      "instructions": "Score the severity of behavioral and contextual anomalies relative to baseline consumer activity on a 3-level scale.",
+      "criteria": [
+        "Nominal: Transaction attributes, velocity, and device footprint align with normal consumer patterns and account history.",
+        "Elevated: Moderate behavioral or contextual deviation (e.g. unfamiliar IP geolocation, elevated cart value, new device fingerprint).",
+        "Severe: Extreme behavioral outlier exhibiting high-risk velocity, high-liquidity digital gift cards, proxy evasion, or mismatched authentication."
+      ]
+    },
+    "needs_manual_review": {
+      "type": "noul",
+      "instructions": "Does this transaction warrant placing an order hold for manual inspection by a risk analyst?"
+    }
+  }
+}

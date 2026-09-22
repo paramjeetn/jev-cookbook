@@ -1,0 +1,35 @@
+{
+  "model": "jev-1.13.0",
+  "state": "CRITICAL INCIDENT ALERT: production-db-primary\nTimestamp: 2026-09-22T03:15:22Z\nSource: Datadog APM & AWS CloudWatch\nService: pg-cluster-primary.us-east-1 (Aurora Postgres 15.4)\nMetric Alarm: DatabaseConnectionPoolExhausted\nDetails: Active connections spiked to 498/500 (99.6% capacity). Log snippet: 'FATAL: remaining connection slots are reserved for non-replication superuser connections'.\nImpact: Upstream service 'checkout-api' reporting 38.4% HTTP 500 failure rate. P99 latency rose from 120ms to 14,850ms. 45 container pods in CrashLoopBackOff due to failed database health checks.\nBlast Radius: Global checkout pipeline blocked; customer transactions failing at gateway step.",
+  "questions": {
+    "severity": {
+      "type": "score",
+      "instructions": "Determine the operational incident severity tier (P4 low to P1 critical).",
+      "criteria": [
+        "P4 - Low: Cosmetic issue, minor internal inconvenience, or non-blocking bug with negligible customer impact.",
+        "P3 - Medium: Degraded non-critical service or partial internal tooling outage with an immediate workaround available.",
+        "P2 - High: Severe degradation of major customer-facing features, high latency, or partial production outage affecting multiple tenants.",
+        "P1 - Critical: Complete system outage, catastrophic core workflow failure, active data loss, or severe security breach requiring emergency bridge."
+      ]
+    },
+    "team": {
+      "type": "choice",
+      "instructions": "Select the engineering domain team that owns primary resolution of this alert.",
+      "criteria": {
+        "backend": "Application business logic, microservice APIs, payment processing workflows, and backend service code.",
+        "frontend": "Web application client UI, mobile apps, styling/CSS layout, JavaScript bundles, and browser compatibility.",
+        "security": "Unauthorized access, suspicious auth geography, credential stuffing, vulnerability exploit, or data breach.",
+        "infrastructure": "Cloud platforms (AWS/GCP), Kubernetes clusters, database engines/connection pools, VPC networking, and bare metal.",
+        "data": "Data warehouse pipelines, ETL jobs, streaming Kafka topics, and analytical reporting models."
+      }
+    },
+    "is_customer_facing": {
+      "type": "noul",
+      "instructions": "Does this incident directly impact external customer transactions, client UI availability, or public user experience?"
+    },
+    "needs_page": {
+      "type": "noul",
+      "instructions": "Does this incident meet the threshold to immediately page on-call engineering staff outside business hours?"
+    }
+  }
+}

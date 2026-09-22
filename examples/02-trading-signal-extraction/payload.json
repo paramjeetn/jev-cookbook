@@ -1,0 +1,44 @@
+{
+  "state": "CEO Opening Remarks & CFO Remarks — Q3 FY2026 Earnings Call Transcript Excerpt:\n\n'Thank you everyone for joining today's call. In the third quarter, we generated $4.12 billion in revenue, reflecting 4% YoY growth, though we observed pronounced macro softness across our enterprise hardware accounts in the APAC region. Gross margins contracted by 120 basis points to 58.4%, driven by component input costs and regional discounting pressure. However, our subscription cloud transformation continues to accelerate rapidly, with ARR up 28% year-over-year. In light of ongoing supply chain normalization and regional enterprise sales cycle elongation, we are prudently revising our Q4 revenue guidance downward by 3% to a range of $4.20B - $4.30B. Simultaneously, reflecting our board's absolute conviction in our long-term cash flow generation and the intrinsic undervaluation of our equity, the Board of Directors has authorized a new $1.5 billion accelerated share repurchase program, to be executed over the next two quarters. We believe this aggressive buyback demonstrates our disciplined capital stewardship.'",
+  "questions": {
+    "guidance_revision": {
+      "type": "choice",
+      "instructions": "Did the company revise forward-looking financial guidance in this statement?",
+      "criteria": {
+        "revised_down": "Guidance was explicitly lowered, cut, or reduced below expectations.",
+        "maintained": "Guidance was reaffirmed, unchanged, or kept constant.",
+        "revised_up": "Guidance was raised, increased, or exceeded prior expectations.",
+        "not_mentioned": "No forward guidance or outlook was discussed."
+      }
+    },
+    "margin_sentiment": {
+      "type": "score",
+      "instructions": "What is the status and sentiment regarding company profit and operating margins?",
+      "criteria": [
+        "Severe margin compression or major operational deterioration.",
+        "Slight margin pressure, modest contraction, or transitory softness.",
+        "Stable margins and consistent unit economics.",
+        "Substantial margin expansion, operating leverage, or profitability improvement."
+      ]
+    },
+    "capital_allocation": {
+      "type": "choice",
+      "instructions": "What capital return or allocation decision was announced by the leadership team?",
+      "criteria": {
+        "share_buyback": "New, expanded, or accelerated share repurchase authorization.",
+        "dividend_hike": "Increased dividend payouts or special dividend declarations.",
+        "dividend_cut": "Reduced, slashed, or suspended dividend payments.",
+        "none": "No capital return or shareholder distribution decisions were announced."
+      }
+    },
+    "signal_ambiguity": {
+      "type": "score",
+      "instructions": "How contradictory or mixed are the strategic and operational signals in this statement?",
+      "criteria": [
+        "Unambiguous single direction: Clearly bullish or clearly bearish with consistent operational metrics.",
+        "Mildly mixed: Mostly one direction with minor transitory caveats or footnotes.",
+        "Highly contradictory: Opposing signals present (e.g. cutting guidance and margins while simultaneously launching aggressive share buybacks)."
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "state": "User query: 'How do I reverse a singly linked list in Python with O(1) auxiliary space? Please provide a clean implementation and explain the pointer manipulations step by step.'",
+  "questions": {
+    "complexity": {
+      "type": "choice",
+      "instructions": "What is the reasoning and algorithmic complexity required to answer this query?",
+      "criteria": {
+        "simple": "Basic conversational replies, standard greetings, simple factual lookups, or trivial text transformations.",
+        "moderate": "Standard algorithmic problems, code implementations, multi-step explanations, or structured data transformations.",
+        "complex": "Advanced theoretical reasoning, complex architectural designs, multi-hop research synthesis, or novel mathematical proofs."
+      }
+    },
+    "needs_tools": {
+      "type": "noul",
+      "instructions": "Does answering this query require executing external tools such as web search, live APIs, or a sandboxed code interpreter?"
+    },
+    "is_safe": {
+      "type": "noul",
+      "instructions": "Is this request benign, safe, and free from security vulnerabilities, malicious intent, or policy violations?"
+    },
+    "domain": {
+      "type": "choice",
+      "instructions": "What primary domain does this request belong to?",
+      "criteria": {
+        "coding": "Software engineering, algorithms, programming languages, debugging, and systems architecture.",
+        "research": "Academic literature, legal analysis, policy review, deep factual investigation, and scientific inquiry.",
+        "creative": "Creative writing, storytelling, poetry, marketing copy, and stylistic roleplay.",
+        "general": "Everyday general knowledge, casual chitchat, routine formatting, and common inquiries."
+      }
+    }
+  }
+}

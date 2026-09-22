@@ -1,0 +1,38 @@
+{
+  "state": "Goal: Book a one-way flight from San Francisco to London on November 15.\n\nCurrent page elements:\n[1] button    Change ticket type · Round trip\n[2] combobox  Where from?        · San Francisco\n[3] combobox  Where to?          · empty\n[4] textbox   Departure          · empty\n[5] button    Search             · disabled\n[6] link      Explore destinations\n[7] button    Flight class · Economy",
+  "questions": {
+    "operation": {
+      "type": "choice",
+      "instructions": "What is the best next operation to advance the flight booking goal?",
+      "criteria": {
+        "CLICK": "Click an interactive element such as a button, menu, or link to activate or expand it.",
+        "TYPE_TEXT": "Type text into a designated input field, combobox, or search box.",
+        "SCROLL_DOWN": "Scroll down the page to reveal additional content or elements.",
+        "WAIT": "Wait for page content or network requests to finish loading.",
+        "DONE": "The flight booking goal has been completely achieved."
+      }
+    },
+    "click_target": {
+      "type": "choice",
+      "instructions": "If the operation is CLICK, which element should be clicked?",
+      "criteria": {
+        "[1]": "Button: Change ticket type · Round trip (to change to one-way)",
+        "[2]": "Combobox: Where from? · San Francisco",
+        "[3]": "Combobox: Where to? · empty",
+        "[4]": "Textbox: Departure · empty",
+        "[5]": "Button: Search · disabled",
+        "[6]": "Link: Explore destinations",
+        "[7]": "Button: Flight class · Economy"
+      }
+    },
+    "type_target": {
+      "type": "choice",
+      "instructions": "If the operation is TYPE_TEXT, which input field should receive text?",
+      "criteria": {
+        "[2]": "Where from? combobox (currently San Francisco)",
+        "[3]": "Where to? combobox (currently empty)",
+        "[4]": "Departure textbox (currently empty)"
+      }
+    }
+  }
+}

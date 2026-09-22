@@ -1,0 +1,34 @@
+{
+  "model": "jev-1.13.0",
+  "state": "PATIENT INTAKE SUMMARY\nPatient: John Doe | Age: 58 | Sex: Male\nArrival Mode: Walk-in accompanied by spouse\nChief Complaint: Severe retrosternal chest tightness radiating to the left shoulder and jaw, duration 45 minutes, sudden onset at rest. Patient describes feeling like an 'iron weight' on chest. Associated with marked dyspnea, diaphoresis (profuse cold sweating), dizziness, and mild nausea.\nVitals: BP 172/104 mmHg, HR 112 bpm (irregular), RR 26/min, SpO2 91% on room air, Temp 98.6 F.\nMedical History: Hyperlipidemia, Type 2 Diabetes Mellitus, 30 pack-year cigarette smoking history.\nCurrent Medications: Atorvastatin 40mg, Metformin 1000mg BID.\nKnown Allergies: Penicillin (hives).\nClinical Presentation: Patient appears in acute distress, pale, clutching anterior chest, speech limited to two-word phrases due to breathlessness.",
+  "questions": {
+    "urgency": {
+      "type": "score",
+      "instructions": "Classify the clinical urgency of this patient intake according to standard triage acuity rubrics.",
+      "criteria": [
+        "Routine: Patient is stable with non-urgent symptoms; safe to await scheduled outpatient visit.",
+        "Semi-urgent: Mild to moderate symptoms requiring non-emergent medical consultation within 24 to 48 hours.",
+        "Urgent: Acute illness or injury with moderate distress requiring same-day physician evaluation; currently hemodynamically stable.",
+        "Emergency: Critical, potentially life-threatening emergency requiring immediate resuscitation, telemetry, and advanced medical stabilization."
+      ]
+    },
+    "care_level": {
+      "type": "choice",
+      "instructions": "Select the most appropriate medical care venue or triage disposition for this patient.",
+      "criteria": {
+        "primary_care": "Standard outpatient clinic or primary care physician appointment within 3-7 days.",
+        "urgent_care": "Same-day walk-in urgent care facility for minor trauma, sprains, or uncomplicated infections.",
+        "emergency_room": "Hospital Emergency Department equipped with resuscitation bays, cardiac catheterization, and emergency imaging.",
+        "call_911": "Immediate emergency medical services (EMS/911) dispatch with paramedic monitoring and pre-hospital cardiac intervention."
+      }
+    },
+    "follow_up_needed": {
+      "type": "noul",
+      "instructions": "Will this clinical condition require mandatory structured follow-up care and monitoring after initial triage?"
+    },
+    "mental_health_flag": {
+      "type": "noul",
+      "instructions": "Does this patient intake indicate an acute psychological crisis, active self-harm ideation, or severe psychiatric emergency?"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "state": "User comment: 'Everyone knows you only got this engineering lead job because of the new diversity quota. You completely lack technical talent and everyone on the team talks behind your back about how incompetent you are.'",
+  "questions": {
+    "is_toxic": {
+      "type": "noul",
+      "instructions": "Does this comment contain toxic remarks, personal attacks, demeaning statements, or workplace harassment?"
+    },
+    "policy_violation": {
+      "type": "choice",
+      "instructions": "Which platform policy violation does this content represent?",
+      "criteria": {
+        "safe": "Content complies with community standards and contains no violations.",
+        "spam": "Unsolicited promotional content, commercial scams, phishing, or deceptive links.",
+        "harassment": "Targeted hostility, personal insults, bullying, disparagement, or workplace intimidation.",
+        "hate_speech": "Attacks, demonization, or incitement directed against protected groups or identity classes.",
+        "nsfw": "Explicit sexual content, pornographic material, or graphic violence."
+      }
+    },
+    "severity": {
+      "type": "score",
+      "instructions": "What is the severity of the policy violation?",
+      "criteria": [
+        "Level 0: Benign. Content is civil, constructive, or neutral with no violation.",
+        "Level 1: Low to Moderate. Borderline hostility, rude phrasing, or policy friction that may warrant a warning.",
+        "Level 2: High. Severe violation, malicious harassment, hate speech, or dangerous spam requiring immediate removal."
+      ]
+    },
+    "contains_pii": {
+      "type": "noul",
+      "instructions": "Does this text expose private personally identifiable information such as phone numbers, home addresses, or social security numbers?"
+    }
+  }
+}
