@@ -11,7 +11,13 @@
 </p>
 
 <p align="center">
+  <img src="assets/banner.jpg" alt="Jev Cookbook — State → Jev (~100ms) → Choice, Score, Noul" width="100%">
+</p>
+
+<p align="center">
   <strong>Production-ready examples, patterns, and theory for building with Jev — the 100ms System One AI.</strong>
+  <br><br>
+  <a href="#-quick-start">Quick Start</a> · <a href="#-examples">10 Examples</a> · <a href="THEORY.md">Theory</a> · <a href="USE_CASES.md">120+ Use Cases</a> · <a href="#-patterns">Patterns</a>
 </p>
 
 ---
