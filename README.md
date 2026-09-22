@@ -127,7 +127,7 @@ intent = resp["answers"]["intent"]
 print(f"Intent: {intent['choice']} (confidence: {intent['confidence']:.0%})")
 ```
 
-> 💡 **No API key yet?** Use [OpenRouter](https://openrouter.ai) (no waitlist) with model `typesafe/jev-latest` and base URL `https://openrouter.ai/api/v1`.
+> 💡 **No API key yet?** Get one instantly at [console.typesafe.ai/keys](https://console.typesafe.ai/keys).
 
 ## 🧱 The 3 Core Primitives
 
@@ -223,7 +223,6 @@ Reusable patterns for composing Jev into production systems:
 | TypeSafe Console (Playground) | [console.typesafe.ai](https://console.typesafe.ai) |
 | TypeSafe Docs | [docs.typesafe.ai](https://docs.typesafe.ai) |
 | jev-ultrafast (web agent) | [github.com/browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast) |
-| OpenRouter (no waitlist) | [openrouter.ai](https://openrouter.ai) |
 
 ---
 
