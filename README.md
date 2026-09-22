@@ -17,14 +17,14 @@
 <p align="center">
   <strong>Production-ready examples, patterns, and theory for building with Jev — the 100ms System One AI.</strong>
   <br><br>
-  <a href="#-quick-start">Quick Start</a> · <a href="#-examples">10 Examples</a> · <a href="THEORY.md">Theory</a> · <a href="USE_CASES.md">120+ Use Cases</a> · <a href="#-patterns">Patterns</a>
+  <a href="#-quick-start-no-sdk-required">Quick Start</a> · <a href="#-examples">10 Examples</a> · <a href="THEORY.md">Theory</a> · <a href="USE_CASES.md">120+ Use Cases</a> · <a href="#-architectural-patterns">Patterns</a>
 </p>
 
 ---
 
 ## ⚡️ What is Jev?
 
-Jev is a "System One" AI model built by TypeSafe AI — a calibrated zero-shot semantic classifier, not a text generator. It takes a context `state` and typed `questions`, returning calibrated probability distributions instead of tokens. Because it doesn't generate text, Jev processes complex reasoning tasks in **~100ms**, operates at **400x lower cost** than traditional LLMs, and provides mathematically rigorous **calibrated confidence scores** for every decision. 
+Jev is a "System One" AI model built by [TypeSafe AI](https://typesafe.ai) — a calibrated zero-shot semantic classifier, not a text generator. It takes a context `state` and typed `questions`, returning calibrated probability distributions instead of tokens. Because it doesn't generate text, Jev processes complex classification tasks in **~100ms**, operates at **400x lower cost** than traditional LLMs, and provides mathematically rigorous **calibrated confidence scores** for every decision.
 
 ## 🏗 Architecture: Where Jev Fits
 
@@ -48,142 +48,186 @@ Stop waiting seconds for an LLM to output a JSON boolean. Jev acts as the ultra-
 ## 🚀 Quick Start (No SDK Required)
 
 ### 1. The 30-Second Console Test
-Go to [console.typesafe.ai](https://console.typesafe.ai) and paste this into the payload editor:
 
+Go to [console.typesafe.ai](https://console.typesafe.ai). The console has **two input panes on the left** and a **response pane on the right**:
+
+**State pane** — paste the context to evaluate:
 ```json
 {
-  "state": "The user clicked 'Cancel Subscription' after experiencing multiple app crashes.",
-  "questions": {
-    "intent": {
-      "type": "choice",
-      "instructions": "Why is the user canceling?",
-      "criteria": {
-        "bug_frustration": "User encountered technical issues",
-        "price": "Too expensive",
-        "unknown": "Reason not specified"
-      }
+  "state": "The user clicked 'Cancel Subscription' after experiencing multiple app crashes."
+}
+```
+
+**Questions pane** — paste your questions (top-level keys, NOT wrapped in `"questions"`):
+```json
+{
+  "intent": {
+    "type": "choice",
+    "instructions": "Why is the user canceling?",
+    "criteria": {
+      "bug_frustration": "User encountered technical issues that broke their workflow.",
+      "price": "The subscription is too expensive for the perceived value.",
+      "competitor": "The user is switching to a competing product.",
+      "unknown": "Reason is not clear from the available context."
     }
+  },
+  "is_churning": {
+    "type": "noul",
+    "instructions": "Is this user at serious risk of permanently leaving?"
   }
 }
 ```
 
-### 2. Python `requests` Implementation
+Hit **Run request** → see results in the Response pane in ~100ms.
+
+Here's what the console actually looks like with our live trading test:
+
+<p align="center">
+  <img src="assets/console_demo.png" alt="TypeSafe Console — Live earnings call signal extraction in 100ms" width="100%">
+</p>
+
+### 2. Python `requests` (API)
+
+For the API, `state` and `questions` are combined into a single request body:
 
 ```python
-import os
-import requests
+import os, requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def analyze_intent():
-    url = "https://api.typesafe.ai/v1/systemone"
-    headers = {
+resp = requests.post(
+    "https://api.typesafe.ai/v1/systemone",
+    headers={
         "Authorization": f"Bearer {os.getenv('TYPESAFE_API_KEY')}",
         "Content-Type": "application/json"
-    }
-    
-    payload = {
-        "state": "The user clicked 'Cancel Subscription' after experiencing multiple app crashes.",
+    },
+    json={
+        "model": "jev-1.13.0",
+        "state": "The user clicked 'Cancel Subscription' after multiple app crashes.",
         "questions": {
             "intent": {
                 "type": "choice",
                 "instructions": "Why is the user canceling?",
                 "criteria": {
-                    "bug_frustration": "User encountered technical issues",
-                    "price": "Too expensive",
-                    "unknown": "Reason not specified"
+                    "bug_frustration": "User encountered technical issues.",
+                    "price": "Too expensive for perceived value.",
+                    "unknown": "Reason not clear."
                 }
+            },
+            "is_churning": {
+                "type": "noul",
+                "instructions": "Is this user at serious risk of permanently leaving?"
             }
         }
     }
-    
-    response = requests.post(url, headers=headers, json=payload)
-    print(response.json())
+).json()
 
-if __name__ == "__main__":
-    analyze_intent()
+intent = resp["answers"]["intent"]
+print(f"Intent: {intent['choice']} (confidence: {intent['confidence']:.0%})")
 ```
+
+> 💡 **No API key yet?** Use [OpenRouter](https://openrouter.ai) (no waitlist) with model `typesafe/jev-latest` and base URL `https://openrouter.ai/api/v1`.
 
 ## 🧱 The 3 Core Primitives
 
-Jev is built on three typed questions. **Always use these exact schemas.**
+Jev has exactly three question types. **Always use `criteria`, never `options` or `min`/`max`.**
 
-| Primitive | Description | Schema Structure | Example Output |
-|-----------|-------------|-------------------|----------------|
-| **Choice** | Categorize into exact keys | `{"type": "choice", "criteria": {"key": "desc"}}` | `{"choice": "key", "confidence": 0.98}` |
-| **Score** | Rank on an ordered scale (2-10 levels) | `{"type": "score", "criteria": ["low", "med", "high"]}` | `{"score": 2.1, "confidence": 0.85}` |
-| **Noul** | True/False boolean probability | `{"type": "noul", "instructions": "Is X true?"}` | `{"noul": 0.99, "confidence": 0.99}` |
+| Primitive | What it does | Schema | Example Output |
+|-----------|-------------|--------|----------------|
+| **Choice** | Pick one from a criteria dict | `{"type": "choice", "criteria": {"key": "description"}}` | `{"choice": "key", "confidence": 0.98, "probabilities": {...}}` |
+| **Score** | Place on an ordered rubric (2-10 levels) | `{"type": "score", "criteria": ["level 0", "level 1", ...]}` | `{"score": 0.78, "confidence": 0.77, "probabilities": {...}}` |
+| **Noul** | Boolean probability (0.0 → 1.0) | `{"type": "noul", "instructions": "Is X true?"}` | `{"noul": 0.95, "confidence": 0.95}` |
+
+> ⚠️ **`score` returns a float**, not an integer — it's the probability-weighted expected value across levels.  
+> Example: 23% level 0, 77% level 1, 0% level 2 → score = `0×0.23 + 1×0.77 + 2×0.00` = **0.77**
 
 ## 📊 Live Results: Trading Signal Extraction
 
-We ran an earnings call transcript through Jev. Here are the actual results from our live test:
+We ran a deliberately ambiguous earnings call transcript through Jev (guidance down 3%, but $1.5B buyback). These are **real results** from the TypeSafe console:
 
-- **`guidance_revision`**: `revised_down` (100% confidence)
-- **`margin_sentiment`**: `0.78` (77% confidence)
-- **`capital_allocation`**: `share_buyback` (100% confidence)
-- **`signal_ambiguity`**: `2.0` (100% confidence)
-- ⏱ **Evaluation Time**: `100.79ms`
+| Question | Type | Result | Confidence |
+|----------|------|--------|------------|
+| `guidance_revision` | Choice | `revised_down` | 100% |
+| `margin_sentiment` | Score | `0.78` of 3 | 77% |
+| `capital_allocation` | Choice | `share_buyback` | 100% |
+| `signal_ambiguity` | Score | `2` of 2 | 100% |
 
-## 📂 Examples Directory
+⏱ **Total evaluation time: 100.79ms** — 4 complex financial questions in parallel.
 
-Jump straight into runnable code. Every example includes a `payload.json`, a Python script, and a detailed README.
+→ [See the full example with code](./examples/02-trading-signal-extraction/)
 
-| Example | Title | Description | Pattern |
-|---------|-------|-------------|---------|
-| [01](./examples/01_customer_support) | 🎧 Customer Support Triage | Categorize tickets instantly before routing | Composite Scoring |
-| [02](./examples/02_trading_signals) | 📈 Trading Signal Extraction | **(LIVE TESTED)** Extract market alpha from transcripts | Speculative Fan-Out |
-| [03](./examples/03_agent_safety) | 🛡️ Agent Safety Guardrails | 100ms content filtering for AI agents | Confidence-Gated Routing |
-| [04](./examples/04_web_agent) | 🌐 Web Agent DOM Navigation | Ported from browser-use/jev-ultrafast | Hybrid Agent Loop |
-| [05](./examples/05_llm_router) | 🔀 LLM Model Router | Route easy queries to cheap models, hard ones to GPT-4 | Confidence-Gated Routing |
-| [06](./examples/06_content_mod) | 🚫 Content Moderation | Multi-dimensional toxicity scoring | Composite Scoring |
-| [07](./examples/07_healthcare_triage) | 🏥 Healthcare Triage | Fast patient urgency categorization | Confidence-Gated Routing |
-| [08](./examples/08_devops_routing) | 📟 DevOps Incident Routing | Assign PagerDuty incidents by log severity | Speculative Fan-Out |
-| [09](./examples/09_legal_contracts) | 📜 Legal Contract Analysis | Flag missing clauses and risky terms | Composite Scoring |
-| [10](./examples/10_ecommerce_fraud) | 🕵️ E-commerce Fraud Detection | Analyze user behavior events for anomalies | Composite Scoring |
+## 📂 Examples
+
+Jump straight into runnable code. Every example has a `README.md`, a Python script, and a `payload.json` you can paste into the console.
+
+| # | Example | Description | Pattern |
+|---|---------|-------------|---------|
+| 01 | [🎧 Customer Support Triage](./examples/01-customer-support-triage/) | Classify tickets by urgency, sentiment, churn risk in one call | Composite Scoring |
+| 02 | [📈 Trading Signal Extraction](./examples/02-trading-signal-extraction/) | **LIVE TESTED** — Extract signals from earnings calls in 100ms | Composite Scoring |
+| 03 | [🛡️ Agent Safety Guardrails](./examples/03-agent-safety-guardrails/) | `@jev_guardrail` decorator blocks dangerous tool calls | Confidence Gating |
+| 04 | [🌐 Web Agent DOM Navigation](./examples/04-web-agent-dom-navigation/) | Speculative fan-out from `browser-use/jev-ultrafast` | Speculative Fan-Out |
+| 05 | [🔀 LLM Model Router](./examples/05-llm-model-router/) | Route queries to cheap vs expensive models (83% cost savings) | Confidence Gating |
+| 06 | [🚫 Content Moderation](./examples/06-content-moderation/) | Multi-dimensional toxicity + PII scoring at scale | Composite Scoring |
+| 07 | [🏥 Healthcare Triage](./examples/07-healthcare-triage/) | Patient intake urgency classification (Jev flags, humans diagnose) | Confidence Gating |
+| 08 | [📟 DevOps Incident Routing](./examples/08-devops-incident-routing/) | Auto-route alerts to the right on-call team | Composite Scoring |
+| 09 | [📜 Legal Contract Analysis](./examples/09-legal-contract-analysis/) | Flag risky clauses for lawyer review | Confidence Gating |
+| 10 | [🕵️ E-commerce Fraud Detection](./examples/10-ecommerce-fraud-detection/) | Real-time checkout fraud scoring in <100ms | Composite Scoring |
 
 ## 🧩 Architectural Patterns
 
-Learn how to structure Jev in production:
-- [Composite Scoring](./docs/patterns/composite-scoring.md): Combine multiple scores to create complex metrics.
-- [Confidence-Gated Routing](./docs/patterns/confidence-gated-routing.md): Fallback to slower LLMs only when Jev's confidence is low.
-- [Speculative Fan-Out](./docs/patterns/speculative-fan-out.md): Query 50 different properties simultaneously.
-- [Hybrid Agent Loop](./docs/patterns/hybrid-agent-loop.md): Use Jev for the inner `OODA` loop and LLMs for generation.
+Reusable patterns for composing Jev into production systems:
 
-## 📚 References & Theory
+| Pattern | What it solves | Doc |
+|---------|---------------|-----|
+| **Composite Scoring** | Break complex judgments into atomic questions, combine in code | [→ Read](./patterns/composite-scoring.md) |
+| **Confidence-Gated Routing** | Automate high-confidence, escalate low-confidence to humans/LLMs | [→ Read](./patterns/confidence-gated-routing.md) |
+| **Speculative Fan-Out** | Evaluate all possible next actions in one parallel request | [→ Read](./patterns/speculative-fanout.md) |
+| **Hybrid Agent Loop** | Jev for structure (100ms) + LLM for text (2s) = best of both | [→ Read](./patterns/hybrid-agent-loop.md) |
 
-- [API Schema Reference](./docs/api-schema.md) — Exact payloads and types
-- [Primitives Cheatsheet](./docs/primitives-cheatsheet.md) — Quick copy-paste snippets
-- [The Theory of System One AI](./docs/THEORY.md) — Why classification beats generation
-- [120+ Use Cases](./docs/USE_CASES.md) — Exhaustive list of what you can build
+## 📚 Deep Dives
 
-## ⚖️ Key Numbers: Jev vs LLMs
+| Document | What's inside |
+|----------|---------------|
+| [**THEORY.md**](./THEORY.md) | First-principles derivation: what Jev is, 10 anti-patterns, 8 composition patterns, RLCD calibration explained |
+| [**USE_CASES.md**](./USE_CASES.md) | 120+ concrete use cases across 10 domains, each with criteria ready to copy-paste |
+| [**API Schema Reference**](./reference/api-schema.md) | Validated schemas for all primitives, every console error and its fix |
+| [**Primitives Cheatsheet**](./reference/primitives-cheatsheet.md) | Quick copy-paste card with threshold recommendations |
+
+## ⚖️ Jev vs LLMs
 
 | Metric | Jev (System 1) | GPT-4o (System 2) |
 |--------|----------------|-------------------|
-| **Latency** | ~100ms | 1s - 5s+ |
-| **Cost** | 400x Cheaper | Expensive |
-| **Output** | Guaranteed strict JSON | Needs strict prompting / JSON mode |
-| **Hallucinations** | None (Calibrated Math) | Possible (Autoregressive) |
-| **Confidence** | mathematically rigorous | Often overconfident |
+| **Latency** | ~100ms | 2–5s |
+| **Cost per decision** | ~$0.00001 | ~$0.01–$0.03 |
+| **Output format** | Typed probabilities (guaranteed) | Prose you parse and hope |
+| **Hallucination risk** | Zero (constrained to your schema) | Always possible |
+| **Confidence scores** | Calibrated (85% = right ~85% of the time) | Generated text (meaningless statistically) |
+| **Text generation** | ❌ Cannot generate text | ✅ Full generation |
+| **Multi-step reasoning** | ❌ Single-pass classification | ✅ Chain-of-thought |
 
-## ⚠️ Common Mistakes (Top 5)
+## ⚠️ Common Mistakes
 
-1. **Using `options` instead of `criteria` in Choice.** (Fails validation!)
-2. **Using `min`/`max` in Score instead of an array in `criteria`.**
-3. **Expecting Jev to generate text.** It only returns probabilities based on your schema.
-4. **Providing generic `state` text.** Jev needs detailed context to classify accurately.
-5. **Ignoring the `confidence` score.** Always check it before routing!
+| Mistake | Error You'll See | Fix |
+|---------|-----------------|-----|
+| Using `options: [...]` for Choice | `unexpected property "options"` | Use `criteria: { "key": "description" }` |
+| Using `min` / `max` for Score | `unexpected property "min"` | Use `criteria: ["level 0", "level 1", ...]` |
+| Wrapping questions in `{"questions": {...}}` | `needs a "type" — noul, choice, or score` | Put question keys at top level in console |
+| Missing `criteria` on Choice/Score | `requires criteria` | Always include `criteria` |
+| Expecting text output | — | Jev returns probabilities, not prose |
 
 ## 🌍 Community & Resources
 
-- [TypeSafe AI Console](https://console.typesafe.ai)
-- [Official TypeSafe Docs](https://docs.typesafe.ai)
-- [jev-ultrafast Repository](https://github.com/browser-use/jev-ultrafast)
+| Resource | Link |
+|----------|------|
+| TypeSafe Console (Playground) | [console.typesafe.ai](https://console.typesafe.ai) |
+| TypeSafe Docs | [docs.typesafe.ai](https://docs.typesafe.ai) |
+| jev-ultrafast (web agent) | [github.com/browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast) |
+| OpenRouter (no waitlist) | [openrouter.ai](https://openrouter.ai) |
 
 ---
 
 <p align="center">
-  <i>Explored and documented by @paramjeet — September 2026</i> <br>
-  <b>If this helps you build faster, please ⭐️ Star and 🔱 Fork this repository!</b>
+  Explored and documented by <a href="https://github.com/paramjeetn">@paramjeetn</a> — September 2026<br>
+  <b>If this helped you build faster, please ⭐️ Star and 🍴 Fork this repository!</b>
 </p>
